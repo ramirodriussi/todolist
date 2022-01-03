@@ -16,13 +16,13 @@
                     <v-row>
                         <v-col class="pb-0" cols="12">
                             <v-text-field
+                                v-if="register"
                                 v-model="user.name"
                                 label="Nombre"
                                 required
                                 :rules="[rules.required]"
                                 outlined
                                 type="text"
-                                @keyup.enter="sendForm(user)"
                                 color="purple darken-1"
                                 dense
                             ></v-text-field>
@@ -35,7 +35,6 @@
                                 :rules="[rules.required, rules.email]"
                                 outlined
                                 type="email"
-                                @keyup.enter="sendForm(user)"
                                 color="purple darken-1"
                                 dense
                             ></v-text-field>
@@ -48,15 +47,19 @@
                                 :rules="[rules.required, rules.password]"
                                 outlined
                                 type="password"
-                                @keyup.enter="sendForm(user)"
                                 color="purple darken-1"
                                 dense
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="text-center">
-                            <v-btn color="purple darken-1 mb-2" :dark="!loading" block @click="sendForm(user)" :loading="loading" :disabled="loading">Ingresar</v-btn>
-                            <v-btn color="purple darken-1" outlined :dark="!loading" block @click="sendForm(user)" :loading="loading" :disabled="loading">Registrarse</v-btn>
+                        <v-col cols="12" class="text-center" v-if="register">
+                            <v-btn color="purple darken-1 mb-2" :dark="!loading" block @click="sendForm" :loading="loading" :disabled="loading">Registrarse</v-btn>
+                            <v-btn color="purple darken-1" outlined :dark="!loading" block @click="register = !register" :loading="loading" :disabled="loading">Ya soy usuario</v-btn>
                         </v-col>
+                        <v-col cols="12" class="text-center" v-else>
+                            <v-btn color="purple darken-1 mb-2" :dark="!loading" block @click="sendForm" :loading="loading" :disabled="loading">Ingresar</v-btn>
+                            <v-btn color="purple darken-1" outlined :dark="!loading" block @click="register = !register" :loading="loading" :disabled="loading">No soy usuario</v-btn>
+                        </v-col>
+
                     </v-row>
                 </v-form>
             </v-card-text>
@@ -73,11 +76,15 @@
 export default {
 
   name: 'IndexPage',
+
+//   middleware: 'guest',
+
   data(){
 
     return {
 
         user: {
+            name: '',
             email: '',
             password: '',
         },
@@ -96,6 +103,7 @@ export default {
         },
         success: '',
         error: '',
+        register: true,
 
     }
 
@@ -108,41 +116,49 @@ export default {
           return re.test(email);
       },
 
-            async sendForm(userInfo){
+    async sendForm(){
 
-                // if(this.$refs.form.validate()){
+        if(this.$refs.form.validate()){
 
-                    // this.loading = !this.loading;
+            this.loading = !this.loading;
 
-                    this.$router.push('dashboard');
+            try {     
+                
+                if(this.register){
 
-                    // try {            
-                        
-                    //     let resp = await this.$auth.loginWith('laravelSanctum', {
-                    //         data: {
-                    //             email: userInfo.email,
-                    //             password: userInfo.password
-                    //         }
-                    //     });
+                    await this.$axios.get('/sanctum/csrf-cookie');
+                    let resp = await this.$axios.post('/register', this.user);
 
-                    //     this.$store.commit('showSnackbar', {color:'success', text: resp.data.message});
-                       
-                    //     this.$store.dispatch('setUser');
-                    //     this.$router.push('panel');
+                } else {
 
-                    // } catch (error) {
+                    let resp = await this.$auth.loginWith('laravelSanctum', {
+                        data: {
+                            email: this.user.email,
+                            password: this.user.password
+                        }
+                    });
 
-                    //     this.$store.commit('showSnackbar', {color:'error', text: error.response.data.errors.email[0]});
-                        
-                    // } finally {
+                }
 
-                    //     this.loading = !this.loading;
+                console.log(resp.data.message);
+                
+                // this.$store.commit('showSnackbar', {color:'success', text: resp.data.message});
+                
+            } catch (error) {
 
-                    // }
+                console.log(error);
 
-                // }
+                // this.$store.commit('showSnackbar', {color:'error', text: error.response.data.errors.email[0]});
+                
+            } finally {
+
+                this.loading = !this.loading;
 
             }
+
+        }
+
+    }
 
   }
 

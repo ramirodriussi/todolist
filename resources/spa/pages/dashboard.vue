@@ -31,6 +31,8 @@ export default {
         Column,
     },
 
+    middleware: 'auth',
+
     data() {
     
         return {

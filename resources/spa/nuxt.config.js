@@ -50,13 +50,39 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/'
+    baseURL: 'http://localhost:8000',
+    proxy: false,
+    credentials: true
+  },
+
+  auth: {
+    strategies: {
+      'laravelSanctum': {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:8000',
+        endpoints: {
+          user: {
+            url: '/api/user', method: 'get'
+          }
+        }
+      },
+    },
+    redirect: {
+      login: '/',
+      logout: '/',
+      callback: false,
+      home: '/dashboard'
+    },
+    // plugins: [
+    //   '@/plugins/axios.js',
+    // ],
+
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
