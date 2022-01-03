@@ -71,7 +71,7 @@ export const mutations = {
         const column = state.columns.find(item => item.id == state.columnId);
 
         const obj = {
-            id: Math.floor(Math.random() * 100),
+            id: payload.id,
             text: payload.text,
             date: payload.date,
         }
@@ -103,7 +103,13 @@ export const mutations = {
 
 export const actions = {
 
+    async setCard({commit}, payload){
 
+        let resp = await this.$axios.post('/api/cards', payload);
+
+        commit('setCard', resp.data.data);
+
+    }
     
 }
 

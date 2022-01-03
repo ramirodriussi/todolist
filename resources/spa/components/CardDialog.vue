@@ -9,13 +9,10 @@
     <template v-slot:default="dialog">
         <v-card>
         <v-toolbar
-            color="primary"
+            color="purple lighten-4"
             dark
-            v-text="(dialog.add) ? 'Agregar tarjeta' : 'Editar tarjeta'"
-        ></v-toolbar>
+        >Tarjeta</v-toolbar>
         <v-card-text class="pa-4">
-
-            {{ dialog }}
 
             <v-form ref="form">
 
@@ -176,7 +173,7 @@ export default {
 
                 if(this.dialog.add){
 
-                    this.$store.commit('setCard', {text:this.form.text,date:this.form.date});
+                    this.$store.dispatch('setCard', {text:this.form.text,date:this.form.date});
 
                 } else {
 
