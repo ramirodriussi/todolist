@@ -1,4 +1,4 @@
-# Stockify
+# To-do-list
 
 _To-do-list desarrollado con Laravel 8 y Nuxt.js._
 
@@ -27,7 +27,6 @@ _Hacemos las migraciones correspondientes y ejecutamos los seeders_
 
 ```
 php artisan migrate --seed
-
 ```
 _Iniciamos servidor_
 
