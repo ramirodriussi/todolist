@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\DashboardController;
 
 
 /*
@@ -23,8 +24,11 @@ Route::middleware('auth:sanctum')->group(function() {
         return $request->user();
     });
 
+	Route::put('cards/{id}/column/{column}', [CardController::class, 'changeColumn']);
+
 	Route::apiResources([
 		'cards' => CardController::class,
+		'dashboard' => DashboardController::class,
 	]);
 
 

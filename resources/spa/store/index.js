@@ -6,47 +6,7 @@ export const state = () => ({
         show: false
     },
     columnId: null,
-    // columns: [
-    //     {
-    //         name: 'Buffer', 
-    //         id: 1, 
-    //     },        
-    //     {
-    //         name: 'Working', 
-    //         id: 2, 
-    //     },
-    //     {
-    //         name: 'Done', 
-    //         id: 3, 
-    //     },
-    // ],
-    // cards: [
-    //     {id: 1, text: 'hoal', date: '01/02/2022', columnId: 1},
-    //     {id: 2, text: 'como', date: '05/02/2022', columnId: 1},
-    //     {id: 3, text: 'vas', date: '08/02/2022', columnId: 1},
-    // ]
-    columns: [
-        {
-            name: 'Buffer', 
-            id: 1, 
-            cards: [
-                {id: 1, text: 'hoal', date: '01/02/2022'},
-                {id: 2, text: 'como', date: '05/02/2022'},
-                {id: 3, text: 'vas', date: '08/02/2022'},
-            ]
-        },
-        {
-            name: 'Working', 
-            id: 2, 
-            cards: []
-        },
-        {
-            name: 'Done', 
-            id: 3, 
-            cards: []
-        },
-    ],
-
+    columns: [],
 
 });
 
@@ -59,7 +19,6 @@ export const mutations = {
         state.cardDialog.add = payload.add;
         state.cardDialog.show = !state.cardDialog.show;
 
-        console.log(state.cardDialog);
     },
 
     setColumnId: (state, payload) => {
@@ -72,13 +31,11 @@ export const mutations = {
 
         const obj = {
             id: payload.id,
-            text: payload.text,
+            task: payload.task,
             date: payload.date,
         }
 
         column.cards.push(obj);
-
-        console.log(obj);
 
     },
 
@@ -86,7 +43,7 @@ export const mutations = {
 
         const card = state.columns.find(item => item.id === state.columnId).cards.find(card => card.id === payload.id);
 
-        card.text = payload.text;
+        card.task = payload.task;
         card.date = payload.date;
 
     },
@@ -96,6 +53,13 @@ export const mutations = {
         state.columns[payload.columnIndex].cards = payload.cards;
         
         // let card = state.cards.find(item => item.id === payload.cards[0].id).columnId = payload.columnIndex;
+
+    },
+
+    setColumns: (state, payload) => {
+
+        state.columns = payload;
+        console.log(state.columns);
 
     }
     
@@ -108,6 +72,28 @@ export const actions = {
         let resp = await this.$axios.post('/api/cards', payload);
 
         commit('setCard', resp.data.data);
+
+    },
+
+    async editCard({commit}, payload){
+
+        let resp = await this.$axios.put(`/api/cards/${payload.id}`, {task: payload.task, date: payload.date});
+
+        commit('editCard', payload);
+
+    },
+
+    async getColumns({commit}){
+
+        let resp = await this.$axios.get('/api/dashboard');
+
+        commit('setColumns', resp.data);
+
+    },
+
+    changeColumn({commit}, payload){
+
+        this.$axios.put(`/api/cards/${payload.id}/column/${payload.columnId}`);
 
     }
     

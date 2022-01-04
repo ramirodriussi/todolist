@@ -19,7 +19,7 @@
                 <v-text-field
                     label="Texto"
                     outlined
-                    v-model="form.text"
+                    v-model="form.task"
                     :rules="[rules.required]"
                 ></v-text-field>
 
@@ -77,10 +77,10 @@ export default {
         return {
 
             form: {
-                text: '',
+                task: '',
                 date: ''
             },
-            // text: '',
+            // task: '',
             // date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             menu: false,
             rules: {
@@ -137,7 +137,7 @@ export default {
                 if(this.dialog.add){
 
                     // this.form.date = (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-                    this.form.text = '';
+                    this.form.task = '';
                     this.form.date = this.$moment().format('YYYY-MM-DD');
                 
                 } else {
@@ -146,7 +146,7 @@ export default {
 
                         const card = this.columns.find(item => item.id === this.columnId).cards.find(c => c.id === this.dialog.id);
 
-                        this.form.text = card.text;
+                        this.form.task = card.task;
                         this.form.date = this.$moment(card.date).format('YYYY-MM-DD');
 
                     }
@@ -173,11 +173,11 @@ export default {
 
                 if(this.dialog.add){
 
-                    this.$store.dispatch('setCard', {text:this.form.text,date:this.form.date});
+                    this.$store.dispatch('setCard', {task:this.form.task,date:this.form.date, columnId: this.columnId});
 
                 } else {
 
-                    this.$store.commit('editCard', {text:this.form.text, date:this.form.date, id: this.dialog.id})
+                    this.$store.dispatch('editCard', {task:this.form.task, date:this.form.date, id: this.dialog.id});
 
                 }
 

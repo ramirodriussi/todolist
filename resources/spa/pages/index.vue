@@ -77,8 +77,6 @@ export default {
 
   name: 'IndexPage',
 
-//   middleware: 'guest',
-
   data(){
 
     return {
@@ -123,15 +121,21 @@ export default {
             this.loading = !this.loading;
 
             try {     
+
+                let resp;
                 
                 if(this.register){
 
                     await this.$axios.get('/sanctum/csrf-cookie');
-                    let resp = await this.$axios.post('/register', this.user);
+                    await this.$axios.post('/register', this.user);
+
+                    await this.$auth.setUserToken(true);
+
+                    this.$router.push('dashboard');
 
                 } else {
 
-                    let resp = await this.$auth.loginWith('laravelSanctum', {
+                    await this.$auth.loginWith('laravelSanctum', {
                         data: {
                             email: this.user.email,
                             password: this.user.password
@@ -140,16 +144,11 @@ export default {
 
                 }
 
-                console.log(resp.data.message);
-                
-                // this.$store.commit('showSnackbar', {color:'success', text: resp.data.message});
-                
+                              
             } catch (error) {
 
                 console.log(error);
-
-                // this.$store.commit('showSnackbar', {color:'error', text: error.response.data.errors.email[0]});
-                
+               
             } finally {
 
                 this.loading = !this.loading;

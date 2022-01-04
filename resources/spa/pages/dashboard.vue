@@ -3,16 +3,10 @@
         <div class="row">
 
             <v-col cols="12" md="4" v-for="(column, i) in columns" :key="i">
-                <Column :name="column.name" :index="i" :id="column.id" />
+                <Column :name="column.column" :index="i" :id="column.id" />
             </v-col>
 
             <CardDialog />
-
-            <v-col cols="12">
-                <pre>
-                    {{cards}}
-                </pre>
-            </v-col>
 
         </div>
     </div>
@@ -37,8 +31,7 @@ export default {
     
         return {
 
-
-
+            //
 
         }
 
@@ -48,26 +41,21 @@ export default {
 
         ...mapState(['columns']),
 
-        cards: {
+    },
 
-            get(){
+    mounted(){
 
-                return this.$store.getters['getCards'];
+        this.getColumns();
 
-            }
-
-        }
-
-},
+    },
 
     methods: {
 
-        // addNewCard(columnId){
+        getColumns(){
 
-        //     this.$store.commit('setColumnId', columnId);
-        //     this.$store.commit('showCardDialog');
+            this.$store.dispatch('getColumns');
 
-        // },
+        }
 
     }
 

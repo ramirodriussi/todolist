@@ -25,22 +25,30 @@ class CardController extends Controller
      */
     public function store(Request $request)
     {
+
         \Validator::make($request->all(), [
             'task' => 'required',
             'date' => 'required',
-        ]);
+            'columnId' => 'required',
+        ])->validate();
 
         $card = new Card;
 
-        $card->task = $request->text;
+        $card->task = $request->task;
         $card->date = $request->date;
         $card->user_id = $request->user()->id;
 
         $card->save();
 
+        // Add to pivot table
+
+        $card->column()->attach($request->columnId);
+
+        // Return data to view
+
         $data = [
             'id' => $card->id,
-            'text' => $card->task,
+            'task' => $card->task,
             'date' => $card->date,
         ];
 
@@ -68,7 +76,36 @@ class CardController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        \Validator::make($request->all(), [
+            'task' => 'required',
+            'date' => 'required',
+        ])->validate();
+
+        $card = Card::find($id);
+
+        $card->task = $request->task;
+        $card->date = $request->date;
+
+        $card->save();
+
+        return response()->json(['message' => 'Actualizado correctamente'], 200);
+
+    }
+
+    public function changeColumn($id, $column)
+    {
+
+        $card = Card::find($id);
+
+        $currentColumnId = $card->column()->first()->id;
+
+        $card->column()->updateExistingPivot($currentColumnId, [
+            'column_id' => $column
+        ]);
+
+        return response()->json(['message' => 'Actualizado correctamente'], 200);
+
     }
 
     /**
@@ -81,4 +118,5 @@ class CardController extends Controller
     {
         //
     }
+    
 }

@@ -11,7 +11,7 @@ class Column extends Model
 
     public function card()
     {
-        return $this->belongsToMany('App\Models\Card');
+        return $this->belongsToMany('App\Models\Card', 'card_columns');
     }
 
 }

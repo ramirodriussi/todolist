@@ -10,10 +10,10 @@
 
         <v-card-text>
 
-            <draggable v-model="cards" :group="{name: 'cards'}" @start="drag=true">
+            <draggable v-model="cards" :group="{name: 'cards' }" @start="drag=true" @change="cardMoved(id, $event)">
 
                 <v-card elevation="2" class="column-card pa-2 mb-3" v-for="(card, i) in cards" :key="i" @click="editCard(id, card.id)">
-                    {{card.text}}
+                    {{card.task}}
                 </v-card>
 
             </draggable>
@@ -39,7 +39,6 @@
 <script>
 
     import draggable from 'vuedraggable';
-    import { mapGetters } from 'vuex';
 
     export default {
 
@@ -120,7 +119,23 @@
                 this.$store.commit('setColumnId', columnId);
                 this.$store.commit('showCardDialog', {add: false, id: cardId});
 
-            }
+            },
+
+            cardMoved(columnId, e){
+
+                console.log(e);
+
+                // to new column
+
+                if(e.added){
+
+                    console.log(columnId, e.added.element.id);
+                    const id = e.added.element.id;
+                    this.$store.dispatch('changeColumn', {columnId, id});
+
+                }
+
+            },
 
         }
 
